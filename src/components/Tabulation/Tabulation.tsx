@@ -9,7 +9,7 @@ import { TabulationStore } from './TabulationStore';
 export const Tabulation = observer(() => {
     const tabStore = useInject<TodoListStore>(SERVICE_IDENTIFIER.TodoListStore)
     return (
-        <Tabs value={tabStore.currentTab} onChange={tabStore.onTabChange} >
+        <Tabs value={tabStore.currentTab} onChange={(event, tabNumber) => tabStore.onTabChange(tabNumber)} >
             <Tab label="Все" />
             <Tab label="Новые" />
             <Tab label="Выполненные" />

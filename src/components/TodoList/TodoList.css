@@ -1,5 +1,5 @@
 .success {
-    background-color: green;
+    text-decoration: line-through !important;
 }
 
 .new {
