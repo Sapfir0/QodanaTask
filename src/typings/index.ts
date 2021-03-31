@@ -12,3 +12,10 @@ export enum Tabulation {
     New=1,
     Completed=2
 }
+
+export type BarChartData = {
+    id: number
+    value: number
+    dayOfWeek: string
+    date: Date
+}
