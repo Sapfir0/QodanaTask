@@ -30,14 +30,17 @@ export class IndexedDBHelper {
         await this._db.delete(tableName, index)
     }
 
-    public write = async (tableName: string, todolist: TodoData[]) => {
+    public write = async (tableName: string, todolist: TodoData[], clearAll=false) => {
         if (this._db === null) {
             return null
         }
 
         const tx = this._db.transaction([tableName], 'readwrite')
         const store = tx.objectStore(tableName)
-  
+        if (clearAll) {
+            await store.clear()
+        }
+
         for (const item of todolist) {
             if (store.put) {
                 store.put(item) 

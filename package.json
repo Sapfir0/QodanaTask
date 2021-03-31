@@ -49,6 +49,7 @@
     ]
   },
   "devDependencies": {
+    "@types/d3": "^6.3.0",
     "prettier": "^2.2.1"
   }
 }

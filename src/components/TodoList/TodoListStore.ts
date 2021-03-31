@@ -70,7 +70,8 @@ export class TodoListStore {
     }
 
     public createNewTask = () => {
-        const newElem = {id: this.data.length + 1, completed: false, title: this.newTitle}
+        const maxId = Math.max(...this.data.map((el) => el.id))
+        const newElem = {id: maxId + 1, completed: false, title: this.newTitle}
         this.data.push(newElem)
         this.onTabChange(this.currentTab)
         this._indexedDb.write(this._tableName, [newElem])
@@ -84,6 +85,13 @@ export class TodoListStore {
         this._indexedDb.remove(this._tableName, id)
         this.onTabChange(this.currentTab)
 
+    }
+
+    public loadFile = (todolist: TodoData[]) => {
+        this.data = todolist
+        this.onTabChange(this.currentTab)     
+        const clearAll = true
+        this._indexedDb.write(this._tableName, todolist, clearAll);
     }
 
 }

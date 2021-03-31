@@ -17,7 +17,7 @@ export type TodoListProps = {
 
 export const TodoList = observer((props: TodoListProps) => {
     const todoStore = useInject<TodoListStore>(SERVICE_IDENTIFIER.TodoListStore);
-  
+    
     return (
         <List>
             {todoStore.tabularData.map((el, i) => {
