@@ -39,9 +39,6 @@ export class TodoListStore {
         await this._indexedDb.init(this._tableName);
         this.data = await this._indexedDb.getData(this._tableName);
         
-        if (this.data.length === 0) { // для прода ужасный способ, но решил  тут сделать такое допущение
-            this._indexedDb.write( this._tableName, initialTododata)
-        }
         this.onTabChange(this.currentTab)
     }
 
@@ -58,8 +55,9 @@ export class TodoListStore {
     }
 
     public onChangeCheckbox = (dataId: number) => (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-        this.data[dataId].completed = checked
-        this._indexedDb.update(this._tableName, this.data[dataId])
+        const index = this.data.findIndex((el) => el.id === dataId)
+        this.data[index].completed = checked
+        this._indexedDb.update(this._tableName, this.data[index])
         this.onTabChange(this.currentTab)
     }
 

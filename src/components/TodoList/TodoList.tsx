@@ -24,7 +24,7 @@ export const TodoList = observer((props: TodoListProps) => {
                 const isSuccess = el.completed;
                 return (
                     <ListItem className={isSuccess ? 'success' : 'new'} key={el.title}>
-                        <Checkbox checked={isSuccess} onChange={todoStore.onChangeCheckbox(i)} />
+                        <Checkbox checked={isSuccess} onChange={todoStore.onChangeCheckbox(el.id)} />
                         <ListItemText primary={el.title} />
 
                         <ListItemSecondaryAction>
