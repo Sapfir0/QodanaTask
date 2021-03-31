@@ -1,12 +1,11 @@
 import { initialTododata } from "data";
 import { injectable } from "inversify";
+import { container } from "inversify/inverisfyContainer";
 import { SERVICE_IDENTIFIER } from "inversify/inversifyTypes";
 import { action, makeObservable, observable } from "mobx";
-import { inject } from "inversify";
 import { IndexedDBHelper } from "serivces/IndexedDBHelper";
 import { TodoData } from "../../typings";
 import { Tabulation } from "../../typings/index";
-import { container } from "inversify/inverisfyContainer";
 
 
 @injectable()
@@ -17,6 +16,7 @@ export class TodoListStore {
     public onCreating = false;
     public newTitle = ""
     private _indexedDb: IndexedDBHelper
+    private _tableName = "todolist"
 
     constructor() {
         this._indexedDb = container.get<IndexedDBHelper>(SERVICE_IDENTIFIER.IndexedDBHelper);
@@ -28,16 +28,23 @@ export class TodoListStore {
             tabularData: observable,
             onCreating: observable,
             createNewTask: action,
-            setCreating: action
+            setCreating: action,
+            initDb: action
         })
-
-        this._indexedDb.init(() => {
-            this._indexedDb.write(initialTododata) 
-            this.data = this._indexedDb.getData()
-        })
-        
+        this.initDb();
+       
     }
 
+    public initDb = async () => {
+        await this._indexedDb.init(this._tableName);
+        this.data = await this._indexedDb.getData(this._tableName);
+        console.log(this.data);
+        
+        if (!this.data) {
+            this._indexedDb.write( this._tableName, initialTododata)
+        }
+        this.onTabChange(this.currentTab)
+    }
 
     public onTabChange = (value: Tabulation) => {
         this.currentTab = value
