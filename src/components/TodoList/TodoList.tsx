@@ -17,9 +17,7 @@ export type TodoListProps = {
 
 export const TodoList = observer((props: TodoListProps) => {
     const todoStore = useInject<TodoListStore>(SERVICE_IDENTIFIER.TodoListStore);
-    // useEffect(() => {
-    //     todoStore.initDb();
-    // }, [todoStore]);
+  
     return (
         <List>
             {todoStore.tabularData.map((el, i) => {
@@ -30,7 +28,7 @@ export const TodoList = observer((props: TodoListProps) => {
                         <ListItemText primary={el.title} />
 
                         <ListItemSecondaryAction>
-                            <IconButton edge="end" onClick={() => todoStore.removeTask(i)}>
+                            <IconButton edge="end" onClick={() => todoStore.removeTask(el.id)}>
                                 <DeleteIcon />
                             </IconButton>
                         </ListItemSecondaryAction>

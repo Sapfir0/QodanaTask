@@ -23,6 +23,13 @@ export class IndexedDBHelper {
         
     }
 
+    public remove = async (tableName: string, index: number) => {
+        if (this._db === null) {
+            return null
+        }
+        await this._db.delete(tableName, index)
+    }
+
     public write = async (tableName: string, todolist: TodoData[]) => {
         if (this._db === null) {
             return null
@@ -39,15 +46,22 @@ export class IndexedDBHelper {
         await tx.done
     }
 
+    public update = async (tableName: string, todo: TodoData) => {
+        if (this._db === null) {
+            return null
+        }
+
+        await this._db.put(tableName, {...todo})
+  
+        
+    }
+
     public getData = async (tableName: string): Promise<TodoData[]>  => {
         if (this._db === null) {
             return []
         }
-
-        const tx = this._db.transaction([tableName], 'readwrite')
-        const store = tx.objectStore(tableName)
   
-        return await store.getAll()
+        return await this._db.getAll(tableName)
 
     }
 

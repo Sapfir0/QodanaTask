@@ -38,9 +38,8 @@ export class TodoListStore {
     public initDb = async () => {
         await this._indexedDb.init(this._tableName);
         this.data = await this._indexedDb.getData(this._tableName);
-        console.log(this.data);
         
-        if (!this.data) {
+        if (this.data.length === 0) { // для прода ужасный способ, но решил  тут сделать такое допущение
             this._indexedDb.write( this._tableName, initialTododata)
         }
         this.onTabChange(this.currentTab)
@@ -60,6 +59,7 @@ export class TodoListStore {
 
     public onChangeCheckbox = (dataId: number) => (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         this.data[dataId].completed = checked
+        this._indexedDb.update(this._tableName, this.data[dataId])
         this.onTabChange(this.currentTab)
     }
 
@@ -72,16 +72,20 @@ export class TodoListStore {
     }
 
     public createNewTask = () => {
-        this.data.push({id: this.data.length + 1, completed: false, title: this.newTitle})
+        const newElem = {id: this.data.length + 1, completed: false, title: this.newTitle}
+        this.data.push(newElem)
         this.onTabChange(this.currentTab)
+        this._indexedDb.write(this._tableName, [newElem])
 
         this.onCreating = false;
         this.newTitle = ""
     }
 
     public removeTask = (id: number) => {
-        this.data = this.data.filter((el, i) => id !== i)
+        this.data = this.data.filter((el, i) => id !== el.id)
+        this._indexedDb.remove(this._tableName, id)
         this.onTabChange(this.currentTab)
+
     }
 
 }
