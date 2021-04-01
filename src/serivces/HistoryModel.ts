@@ -4,12 +4,10 @@ import { dayOfWeek, format } from "./DateHelper";
 import { IndexedDBHelper } from "./IndexedDBHelper";
 
 
-export class HistoryModel extends IndexedDBHelper {
+export class HistoryModel extends IndexedDBHelper<BarChartData> {
     protected _dbName = "history";
 
-    public init = async (tableName: string) => {
-        console.log(tableName);
-        
+    public init = async (tableName: string) => {       
         this._db = await openDB(this._dbName, this._version, {
             upgrade(db, oldVersion, newVersion, transaction) {
                 db.createObjectStore(tableName, { keyPath: "date" });
@@ -17,14 +15,17 @@ export class HistoryModel extends IndexedDBHelper {
         })
     }
 
+    public getDefaultHistoryRecord = (date: Date): BarChartData => {
+        return {value: 0, date: format(date), dayOfWeek: dayOfWeek[date.getDay()]}
+    }
+
     public changeTaskStatus = async (tableName: string, newTaskStatus: boolean) => {
         const currentDate = new Date()
-        const dateKey = format(currentDate)
-        let todayRecord: BarChartData | undefined = undefined
-        todayRecord = await this._db?.get(tableName, dateKey)
-    
+
+        let todayRecord: BarChartData | undefined = await this._db?.get(tableName, format(currentDate))
+        
         if (todayRecord === undefined) {
-            todayRecord = {value: 0, date: dateKey, dayOfWeek: dayOfWeek[currentDate.getDay()]}
+            todayRecord = this.getDefaultHistoryRecord(currentDate)
         } 
 
         const completedTaskCount = newTaskStatus ? todayRecord.value + 1 : todayRecord.value - 1
@@ -32,25 +33,26 @@ export class HistoryModel extends IndexedDBHelper {
     }
 
     public getNewDataArray = (data: BarChartData[], newTaskStatus: boolean) => {
-        const historyIndex = data.findIndex((el) => el.date === format(new Date()))
-        const completedTaskCount = data[historyIndex].value
+        const newData = [...data]
+        const historyIndex = newData.findIndex((task) => task.date === format(new Date()))
+        const completedTaskCount = newData[historyIndex].value
         const newCompletedTaskCount = newTaskStatus ? completedTaskCount + 1 : completedTaskCount - 1
 
-        data[historyIndex].value = Math.max(newCompletedTaskCount, 0)
-        return data
+        newData[historyIndex].value = Math.max(newCompletedTaskCount, 0)
+        return newData
     }
 
     public createDataIfNotExists = async (tableName: string) => {
         const currentDate = new Date()
         
-        for (let i=0; i<dayOfWeek.length; i++) {
+        for (let day=0; day<dayOfWeek.length; day++) {
             const tempDate = new Date();
-            tempDate.setDate(currentDate.getDate() - i)
+            tempDate.setDate(currentDate.getDate() - day)
 
             const dateKey = format(tempDate)
             const todayRecord = await this._db?.get(tableName, dateKey)
             if (todayRecord === undefined) {
-                await this._db?.put(tableName, { value: 0, date: dateKey, dayOfWeek: dayOfWeek[tempDate.getDay()]})
+                await this._db?.put(tableName, this.getDefaultHistoryRecord(tempDate))
             }
         }
     }

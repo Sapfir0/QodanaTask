@@ -86,7 +86,7 @@ export class TodoListStore {
     }
 
     public updateHistoryData = (checked: boolean) => {
-        this.historyData = [...this._historyDB.getNewDataArray(this.historyData, checked)]
+        this.historyData = this._historyDB.getNewDataArray(this.historyData, checked)
     }
 
     public onTypingNewInput = (value: string) => {

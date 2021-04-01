@@ -4,7 +4,7 @@ import { TodoData } from "typings";
 
 
 @injectable()
-export abstract class IndexedDBHelper {
+export abstract class IndexedDBHelper<TDto> {
     protected _dbName = "todo";
     protected _version = 3;
     protected _db: IDBPDatabase | null = null
@@ -15,7 +15,7 @@ export abstract class IndexedDBHelper {
         await this._db?.delete(tableName, index)
     }
 
-    public write = async (tableName: string, todolist: TodoData[], clearAll=false) => {
+    public write = async (tableName: string, list: TDto[], clearAll=false) => {
         if (this._db === null) {
             return null
         }
@@ -26,19 +26,19 @@ export abstract class IndexedDBHelper {
             await store.clear()
         }
 
-        for (const task of todolist) {
+        for (const item of list) {
             if (store.put) {
-                store.put(task) 
+                store.put(item) 
             }
         }
         await tx.done
     }
 
-    public update = async (tableName: string, todo: TodoData) => {
+    public update = async (tableName: string, todo: TDto) => {
         await this._db?.put(tableName, {...todo})        
     }
 
-    public getData = async (tableName: string): Promise<TodoData[]>  => {
+    public getData = async (tableName: string): Promise<TDto[]>  => {
         if (this._db === null) {
             return []
         }
