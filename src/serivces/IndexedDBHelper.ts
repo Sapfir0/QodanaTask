@@ -12,10 +12,7 @@ export abstract class IndexedDBHelper {
     public abstract init = async (tableName: string) => {}
 
     public remove = async (tableName: string, index: number) => {
-        if (this._db === null) {
-            return null
-        }
-        await this._db.delete(tableName, index)
+        await this._db?.delete(tableName, index)
     }
 
     public write = async (tableName: string, todolist: TodoData[], clearAll=false) => {
@@ -29,22 +26,16 @@ export abstract class IndexedDBHelper {
             await store.clear()
         }
 
-        for (const item of todolist) {
+        for (const task of todolist) {
             if (store.put) {
-                store.put(item) 
+                store.put(task) 
             }
         }
         await tx.done
     }
 
     public update = async (tableName: string, todo: TodoData) => {
-        if (this._db === null) {
-            return null
-        }
-
-        await this._db.put(tableName, {...todo})
-  
-        
+        await this._db?.put(tableName, {...todo})        
     }
 
     public getData = async (tableName: string): Promise<TodoData[]>  => {

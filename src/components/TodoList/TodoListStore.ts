@@ -59,7 +59,6 @@ export class TodoListStore {
         this.data = data
         this.historyData = history
 
-        
         this.onTabChange(this.currentTab)
     }
 
@@ -87,7 +86,7 @@ export class TodoListStore {
     }
 
     public updateHistoryData = (checked: boolean) => {
-        this.historyData = [...this._historyDB.chageTaskStatusWithoutDB(this.historyData, checked)]
+        this.historyData = [...this._historyDB.getNewDataArray(this.historyData, checked)]
     }
 
     public onTypingNewInput = (value: string) => {
@@ -110,7 +109,7 @@ export class TodoListStore {
     }
 
     public removeTask = (id: number) => {
-        this.data = this.data.filter((el, i) => id !== el.id)
+        this.data = this.data.filter((task) => id !== task.id)
         this._todoDB.remove(this._tableNameList, id)
         this.onTabChange(this.currentTab)
 

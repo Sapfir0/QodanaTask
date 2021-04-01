@@ -17,8 +17,6 @@ export class HistoryModel extends IndexedDBHelper {
         })
     }
 
-
-
     public changeTaskStatus = async (tableName: string, newTaskStatus: boolean) => {
         const currentDate = new Date()
         const dateKey = format(currentDate)
@@ -31,10 +29,9 @@ export class HistoryModel extends IndexedDBHelper {
 
         const completedTaskCount = newTaskStatus ? todayRecord.value + 1 : todayRecord.value - 1
         this._db?.put(tableName, {...todayRecord, value: Math.max(completedTaskCount, 0) })
-    
     }
 
-    public chageTaskStatusWithoutDB = (data: BarChartData[], newTaskStatus: boolean) => {
+    public getNewDataArray = (data: BarChartData[], newTaskStatus: boolean) => {
         const historyIndex = data.findIndex((el) => el.date === format(new Date()))
         const completedTaskCount = data[historyIndex].value
         const newCompletedTaskCount = newTaskStatus ? completedTaskCount + 1 : completedTaskCount - 1
@@ -59,12 +56,12 @@ export class HistoryModel extends IndexedDBHelper {
     }
 
     public getAll = async (tableName: string): Promise<BarChartData[]>   => {
-        const result = await this._db?.getAll(tableName)
-        if (result === undefined) {
+        const allRecords = await this._db?.getAll(tableName)
+        if (allRecords === undefined) {
             return []
         }
         
-        return result.slice(-dayOfWeek.length)
+        return allRecords.slice(-dayOfWeek.length) // получим 7 последних  записей
 
     }
 
