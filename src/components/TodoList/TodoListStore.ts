@@ -11,7 +11,7 @@ import { Tabulation } from "../../typings/index";
 @injectable()
 export class TodoListStore {
     public data: TodoData[] = []
-    public currentTab: number = Tabulation.All
+    public currentTab: Tabulation = Tabulation.All
     public tabularData = this.data
     public onCreating = false;
     public newTitle = ""
@@ -45,12 +45,20 @@ export class TodoListStore {
 
 
     public initDb = async () => {
-        await this._todoDB.init(this._tableNameList);
-        this.data = await this._todoDB.getData(this._tableNameList);
+        await Promise.all([
+            this._todoDB.init(this._tableNameList),
+            this._historyDB.init(this._tableNameHistory), 
+        ])
 
-        await this._historyDB.init(this._tableNameHistory)
         await this._historyDB.createDataIfNotExists(this._tableNameHistory)
-        this.historyData = await this._historyDB.getAll(this._tableNameHistory)
+
+        const [data, history] = await Promise.all([
+            this._todoDB.getData(this._tableNameList),
+            this._historyDB.getAll(this._tableNameHistory)
+         ])
+        this.data = data
+        this.historyData = history
+
         
         this.onTabChange(this.currentTab)
     }
