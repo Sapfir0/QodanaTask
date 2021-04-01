@@ -1,27 +1,15 @@
-import { IDBPDatabase, openDB } from "idb";
+import { IDBPDatabase } from "idb";
 import { injectable } from "inversify";
 import { TodoData } from "typings";
 
 
 @injectable()
-export class IndexedDBHelper {
-    private _dbName = "todo";
-    private _version = 3;
-    //  // не приемлимо для этого уровня абстракции, но для простоты прототипирования оставлю
-    private _db: IDBPDatabase | null = null
-    // private _request: IDBOpenDBRequest
+export abstract class IndexedDBHelper {
+    protected _dbName = "todo";
+    protected _version = 3;
+    protected _db: IDBPDatabase | null = null
 
-    constructor() {
-    }
-
-    public init = async (tableName: string) => {
-        this._db = await openDB(this._dbName, this._version, {
-            upgrade(db, oldVersion, newVersion, transaction) {
-                db.createObjectStore(tableName, { keyPath: "id" });
-            }
-        })
-        
-    }
+    public abstract init = async (tableName: string) => {}
 
     public remove = async (tableName: string, index: number) => {
         if (this._db === null) {

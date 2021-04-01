@@ -1,7 +1,8 @@
 import { BarChartData } from "typings";
 
+export const dayOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
 export const getChartData = (): BarChartData[] => {
-    const dayOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
     const curDate = new Date();
     
     const data: BarChartData[] = [];

@@ -12,7 +12,6 @@ import './TodoList.css';
 import { TodoListStore } from './TodoListStore';
 
 export type TodoListProps = {
-    // data: TodoData[];
 };
 
 export const TodoList = observer((props: TodoListProps) => {

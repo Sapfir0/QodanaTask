@@ -1,9 +1,9 @@
-import { initialTododata } from "data";
 import { injectable } from "inversify";
 import { container } from "inversify/inverisfyContainer";
 import { SERVICE_IDENTIFIER } from "inversify/inversifyTypes";
 import { action, makeObservable, observable } from "mobx";
-import { IndexedDBHelper } from "serivces/IndexedDBHelper";
+import { HistoryModel } from "serivces/HistoryModel";
+import { TodoListModel } from "serivces/TodoListModel";
 import { TodoData } from "../../typings";
 import { Tabulation } from "../../typings/index";
 
@@ -15,11 +15,16 @@ export class TodoListStore {
     public tabularData = this.data
     public onCreating = false;
     public newTitle = ""
-    private _indexedDb: IndexedDBHelper
-    private _tableName = "todolist"
+    private _todoDB: TodoListModel
+    private _historyDB: HistoryModel
 
+    private _tableNameList = "todolist"
+    protected _tableNameHistory = "history";
+    
     constructor() {
-        this._indexedDb = container.get<IndexedDBHelper>(SERVICE_IDENTIFIER.IndexedDBHelper);
+        this._todoDB = container.get<TodoListModel>(SERVICE_IDENTIFIER.TodoListModel);
+        this._historyDB = container.get<HistoryModel>(SERVICE_IDENTIFIER.HistoryModel);
+
         makeObservable(this, {
             data: observable,
             onChangeCheckbox: action,
@@ -36,8 +41,10 @@ export class TodoListStore {
     }
 
     public initDb = async () => {
-        await this._indexedDb.init(this._tableName);
-        this.data = await this._indexedDb.getData(this._tableName);
+        await this._todoDB.init(this._tableNameList);
+        this.data = await this._todoDB.getData(this._tableNameList);
+
+        await this._historyDB.init(this._tableNameHistory)
         
         this.onTabChange(this.currentTab)
     }
@@ -57,7 +64,9 @@ export class TodoListStore {
     public onChangeCheckbox = (dataId: number) => (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         const index = this.data.findIndex((el) => el.id === dataId)
         this.data[index].completed = checked
-        this._indexedDb.update(this._tableName, this.data[index])
+        this._todoDB.update(this._tableNameList, this.data[index])
+
+        this._historyDB.changeTaskStatus(this._tableNameHistory, checked)
         this.onTabChange(this.currentTab)
     }
 
@@ -74,7 +83,7 @@ export class TodoListStore {
         const newElem = {id: maxId + 1, completed: false, title: this.newTitle}
         this.data.push(newElem)
         this.onTabChange(this.currentTab)
-        this._indexedDb.write(this._tableName, [newElem])
+        this._todoDB.write(this._tableNameList, [newElem])
 
         this.onCreating = false;
         this.newTitle = ""
@@ -82,7 +91,7 @@ export class TodoListStore {
 
     public removeTask = (id: number) => {
         this.data = this.data.filter((el, i) => id !== el.id)
-        this._indexedDb.remove(this._tableName, id)
+        this._todoDB.remove(this._tableNameList, id)
         this.onTabChange(this.currentTab)
 
     }
@@ -91,7 +100,7 @@ export class TodoListStore {
         this.data = todolist
         this.onTabChange(this.currentTab)     
         const clearAll = true
-        this._indexedDb.write(this._tableName, todolist, clearAll);
+        this._todoDB.write(this._tableNameList, todolist, clearAll);
     }
 
 }
