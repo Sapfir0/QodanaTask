@@ -19,7 +19,7 @@ export const Rect = ({ data, x, y, height, top, bottom }: RectProps) => {
     const value = data.value
     return (
         <g transform={`translate(${x(data.dayOfWeek)}, ${y(value)})`}>
-            <rect width={x.bandwidth()} height={height - bottom - top - y(value)} fill={colors(data.id.toString())} />
+            <rect width={x.bandwidth()} height={height - bottom - top - y(value)} fill={colors(data.date)} />
             <text
                 transform={`translate(${x.bandwidth() / 2}, ${-2})`}
                 textAnchor="middle"

@@ -4,7 +4,7 @@ import { SERVICE_IDENTIFIER } from "inversify/inversifyTypes";
 import { action, makeObservable, observable } from "mobx";
 import { HistoryModel } from "serivces/HistoryModel";
 import { TodoListModel } from "serivces/TodoListModel";
-import { TodoData } from "../../typings";
+import { BarChartData, TodoData } from "../../typings";
 import { Tabulation } from "../../typings/index";
 
 
@@ -17,6 +17,7 @@ export class TodoListStore {
     public newTitle = ""
     private _todoDB: TodoListModel
     private _historyDB: HistoryModel
+    public historyData: BarChartData[] = []
 
     private _tableNameList = "todolist"
     protected _tableNameHistory = "history";
@@ -34,17 +35,22 @@ export class TodoListStore {
             onCreating: observable,
             createNewTask: action,
             setCreating: action,
-            initDb: action
+            initDb: action,
+            historyData: observable,
+            updateHistoryData: action
         })
         this.initDb();
        
     }
+
 
     public initDb = async () => {
         await this._todoDB.init(this._tableNameList);
         this.data = await this._todoDB.getData(this._tableNameList);
 
         await this._historyDB.init(this._tableNameHistory)
+        await this._historyDB.createDataIfNotExists(this._tableNameHistory)
+        this.historyData = await this._historyDB.getAll(this._tableNameHistory)
         
         this.onTabChange(this.currentTab)
     }
@@ -68,6 +74,12 @@ export class TodoListStore {
 
         this._historyDB.changeTaskStatus(this._tableNameHistory, checked)
         this.onTabChange(this.currentTab)
+        
+        this.updateHistoryData(checked)
+    }
+
+    public updateHistoryData = (checked: boolean) => {
+        this.historyData = [...this._historyDB.chageTaskStatusWithoutDB(this.historyData, checked)]
     }
 
     public onTypingNewInput = (value: string) => {

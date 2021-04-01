@@ -18,7 +18,7 @@ export class HistoryModel extends IndexedDBHelper {
     }
 
     public format(date: Date) {
-        return new Intl.DateTimeFormat('ru-RU', { year: 'numeric', month: 'numeric', day: 'numeric'}).format(date)
+        return new Intl.DateTimeFormat('en-En', { year: 'numeric', month: 'numeric', day: 'numeric'}).format(date)
     }
 
     public changeTaskStatus = async (tableName: string, newTaskStatus: boolean) => {
@@ -28,12 +28,46 @@ export class HistoryModel extends IndexedDBHelper {
         todayRecord = await this._db?.get(tableName, dateKey)
     
         if (todayRecord === undefined) {
-            todayRecord = {id: 1, value: 1, date: dateKey, dayOfWeek: dayOfWeek[currentDate.getDay()]}
+            todayRecord = {value: 0, date: dateKey, dayOfWeek: dayOfWeek[currentDate.getDay()]}
         } 
-        console.log(todayRecord);
+
         const completedTaskCount = newTaskStatus ? todayRecord.value + 1 : todayRecord.value - 1
-        this._db?.put(tableName, {...todayRecord, value: completedTaskCount})
+        this._db?.put(tableName, {...todayRecord, value: Math.max(completedTaskCount, 0) })
     
+    }
+
+    public chageTaskStatusWithoutDB = (data: BarChartData[], newTaskStatus: boolean) => {
+        const historyIndex = data.findIndex((el) => el.date === this.format(new Date()))
+        const completedTaskCount = data[historyIndex].value
+        const newCompletedTaskCount = newTaskStatus ? completedTaskCount + 1 : completedTaskCount - 1
+
+        data[historyIndex].value = Math.max(newCompletedTaskCount, 0)
+        return data
+    }
+
+    public createDataIfNotExists = async (tableName: string) => {
+        const currentDate = new Date()
+        
+        for (let i=0; i<dayOfWeek.length; i++) {
+            const tempDate = new Date();
+            tempDate.setDate(currentDate.getDate() - i)
+
+            const dateKey = this.format(tempDate)
+            const todayRecord = await this._db?.get(tableName, dateKey)
+            if (todayRecord === undefined) {
+                await this._db?.put(tableName, { value: 0, date: dateKey, dayOfWeek: dayOfWeek[tempDate.getDay()]})
+            }
+        }
+    }
+
+    public getAll = async (tableName: string): Promise<BarChartData[]>   => {
+        const result = await this._db?.getAll(tableName)
+        if (result === undefined) {
+            return []
+        }
+        
+        return result.slice(-dayOfWeek.length)
+
     }
 
 }

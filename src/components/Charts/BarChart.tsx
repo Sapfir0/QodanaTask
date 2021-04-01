@@ -27,7 +27,7 @@ export const Bar = (props: BarProps) => {
         .scaleLinear()
         .range([props.height - topPadding - axisPadding, 0])
         .domain([0, d3.max(data, (d) => d.value)!]);
-
+    
     return (
         <>
             <svg width={props.width} height={props.height}>
@@ -42,7 +42,7 @@ export const Bar = (props: BarProps) => {
                 <YAxis scale={y} top={topPadding} bottom={axisPadding} left={axisPadding} right={rightPadding} />
                 <g transform={`translate(${axisPadding}, ${topPadding})`}>
                     {data.map((d, i) => (
-                        <Rect data={d} x={x} y={y} key={d.id} top={topPadding} bottom={axisPadding} height={props.height} />
+                        <Rect data={d} x={x} y={y} key={d.date} top={topPadding} bottom={axisPadding} height={props.height} />
                     ))}
                 </g>
             </svg>

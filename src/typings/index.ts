@@ -14,8 +14,7 @@ export enum Tabulation {
 }
 
 export type BarChartData = {
-    id: number
     value: number
     dayOfWeek: string
-    date: Date
+    date: string
 }
