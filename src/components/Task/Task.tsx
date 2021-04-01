@@ -11,7 +11,7 @@ export const TaskCreator = observer(() => {
     const onCreatingBlock = (
         <div>
             <Input onChange={(event) => todoStore.onTypingNewInput(event.target.value)} />
-            <div style={{marginTop: 10}}>
+            <div style={{ marginTop: 10 }}>
                 <Button onClick={() => todoStore.createNewTask()}>Добавить</Button>
                 <Button onClick={() => todoStore.setCreating(false)}>Отменить</Button>
             </div>

@@ -5,7 +5,6 @@ import { TodoListModel } from 'serivces/TodoListModel';
 import { TodoListStore } from '../components/TodoList/TodoListStore';
 import { SERVICE_IDENTIFIER } from './inversifyTypes';
 
-
 export const container = new Container();
 container.bind(SERVICE_IDENTIFIER.TodoListStore).to(TodoListStore).inSingletonScope();
 container.bind(SERVICE_IDENTIFIER.HistoryModel).to(HistoryModel).inSingletonScope();

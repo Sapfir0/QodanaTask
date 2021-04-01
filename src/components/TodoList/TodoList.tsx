@@ -5,18 +5,17 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { observer } from 'mobx-react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { SERVICE_IDENTIFIER } from '../../inversify/inversifyTypes';
 import { useInject } from '../../shared/hooks/useInject';
 import './TodoList.css';
 import { TodoListStore } from './TodoListStore';
 
-export type TodoListProps = {
-};
+export type TodoListProps = {};
 
 export const TodoList = observer((props: TodoListProps) => {
     const todoStore = useInject<TodoListStore>(SERVICE_IDENTIFIER.TodoListStore);
-    
+
     return (
         <List>
             {todoStore.tabularData.map((el, i) => {

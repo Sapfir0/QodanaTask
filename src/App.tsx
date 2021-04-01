@@ -12,7 +12,6 @@ import { TodoList } from './components/TodoList/TodoList';
 import { Tabulation as ETabulation } from './typings/index';
 import Typography from '@material-ui/core/Typography';
 
-
 const App = observer(() => {
     const todoStore = useInject<TodoListStore>(SERVICE_IDENTIFIER.TodoListStore);
 
@@ -32,7 +31,7 @@ const App = observer(() => {
                 <TodoList />
             </Grid>
 
-            <Grid item >
+            <Grid item>
                 <TaskCreator />
             </Grid>
 
@@ -42,7 +41,7 @@ const App = observer(() => {
                 </Grid>
             )}
 
-            <Grid item style={{marginTop: 40}}>
+            <Grid item style={{ marginTop: 40 }}>
                 <Typography variant="h5" component="h5">
                     Для обновления задач из файла, загрузите его (все существующие задачи удалятся){' '}
                 </Typography>

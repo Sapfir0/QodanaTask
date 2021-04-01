@@ -1,10 +1,10 @@
-import { TodoData } from "typings";
+import { TodoData } from 'typings';
 
 export const initialTododata: TodoData[] = [
     {
         id: 0,
         title: 'Задача',
-        completed: false
+        completed: false,
     },
     {
         id: 1,

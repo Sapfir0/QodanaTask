@@ -6,9 +6,9 @@ import { SERVICE_IDENTIFIER } from '../../inversify/inversifyTypes';
 import { useInject } from '../../shared/hooks/useInject';
 
 export const Tabulation = observer(() => {
-    const tabStore = useInject<TodoListStore>(SERVICE_IDENTIFIER.TodoListStore)
+    const tabStore = useInject<TodoListStore>(SERVICE_IDENTIFIER.TodoListStore);
     return (
-        <Tabs value={tabStore.currentTab} onChange={(event, tabNumber) => tabStore.onTabChange(tabNumber)} >
+        <Tabs value={tabStore.currentTab} onChange={(event, tabNumber) => tabStore.onTabChange(tabNumber)}>
             <Tab label="Все" />
             <Tab label="Новые" />
             <Tab label="Выполненные" />

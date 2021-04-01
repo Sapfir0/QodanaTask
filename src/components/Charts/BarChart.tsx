@@ -1,15 +1,14 @@
 import * as d3 from 'd3';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { BarChartData } from 'typings';
 import { XAxis, YAxis } from './Axis';
 import { Rect } from './Rect';
 
-
 export type BarProps = {
-    data: BarChartData[]
-    width: number
-    height: number
-}
+    data: BarChartData[];
+    width: number;
+    height: number;
+};
 
 export const Bar = (props: BarProps) => {
     const axisPadding = 30;
@@ -27,7 +26,7 @@ export const Bar = (props: BarProps) => {
         .scaleLinear()
         .range([props.height - topPadding - axisPadding, 0])
         .domain([0, d3.max(data, (d) => d.value)!]);
-    
+
     return (
         <>
             <svg width={props.width} height={props.height}>
@@ -42,7 +41,15 @@ export const Bar = (props: BarProps) => {
                 <YAxis scale={y} top={topPadding} bottom={axisPadding} left={axisPadding} right={rightPadding} />
                 <g transform={`translate(${axisPadding}, ${topPadding})`}>
                     {data.map((d, i) => (
-                        <Rect data={d} x={x} y={y} key={d.date} top={topPadding} bottom={axisPadding} height={props.height} />
+                        <Rect
+                            data={d}
+                            x={x}
+                            y={y}
+                            key={d.date}
+                            top={topPadding}
+                            bottom={axisPadding}
+                            height={props.height}
+                        />
                     ))}
                 </g>
             </svg>

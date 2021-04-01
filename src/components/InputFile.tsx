@@ -3,9 +3,7 @@ import React, { ChangeEvent } from 'react';
 import { useInject } from 'shared/hooks/useInject';
 import { TodoListStore } from './TodoList/TodoListStore';
 
-export type FileUploaderProps = {
-    // handleFileInput: (event: ChangeEvent<HTMLElement>) => any
-};
+export type FileUploaderProps = {};
 
 export const FileUploader = (props: FileUploaderProps) => {
     const todoStore = useInject<TodoListStore>(SERVICE_IDENTIFIER.TodoListStore);
@@ -26,7 +24,7 @@ export const FileUploader = (props: FileUploaderProps) => {
         }
     };
     return (
-        <div style={{marginTop: 50}}>
+        <div style={{ marginTop: 50 }}>
             <input type="file" onChange={handleFileInput} />
         </div>
     );
