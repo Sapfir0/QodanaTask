@@ -1,6 +1,6 @@
 import { openDB } from "idb";
 import { BarChartData } from "typings";
-import { dayOfWeek } from "./DateHelper";
+import { dayOfWeek, format } from "./DateHelper";
 import { IndexedDBHelper } from "./IndexedDBHelper";
 
 
@@ -17,13 +17,11 @@ export class HistoryModel extends IndexedDBHelper {
         })
     }
 
-    public format(date: Date) {
-        return new Intl.DateTimeFormat('en-En', { year: 'numeric', month: 'numeric', day: 'numeric'}).format(date)
-    }
+
 
     public changeTaskStatus = async (tableName: string, newTaskStatus: boolean) => {
         const currentDate = new Date()
-        const dateKey = this.format(currentDate)
+        const dateKey = format(currentDate)
         let todayRecord: BarChartData | undefined = undefined
         todayRecord = await this._db?.get(tableName, dateKey)
     
@@ -37,7 +35,7 @@ export class HistoryModel extends IndexedDBHelper {
     }
 
     public chageTaskStatusWithoutDB = (data: BarChartData[], newTaskStatus: boolean) => {
-        const historyIndex = data.findIndex((el) => el.date === this.format(new Date()))
+        const historyIndex = data.findIndex((el) => el.date === format(new Date()))
         const completedTaskCount = data[historyIndex].value
         const newCompletedTaskCount = newTaskStatus ? completedTaskCount + 1 : completedTaskCount - 1
 
@@ -52,7 +50,7 @@ export class HistoryModel extends IndexedDBHelper {
             const tempDate = new Date();
             tempDate.setDate(currentDate.getDate() - i)
 
-            const dateKey = this.format(tempDate)
+            const dateKey = format(tempDate)
             const todayRecord = await this._db?.get(tableName, dateKey)
             if (todayRecord === undefined) {
                 await this._db?.put(tableName, { value: 0, date: dateKey, dayOfWeek: dayOfWeek[tempDate.getDay()]})
