@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/components/TodoList/TodoList.css"],"names":[],"mappings":"AAAA,SACI,sCACJ","file":"main.a9763297.chunk.css","sourcesContent":[".success {\r\n    text-decoration: line-through !important;\r\n}\r\n\r\n.new {\r\n\r\n}"]}
